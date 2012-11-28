@@ -36,7 +36,7 @@ module GitDiff
 					when NEW_FILE_PATTERN
 						@working_file.new_filename = $1
 					when CHUNK_PATTERN
-						@working_chunk = Chunk.new(($1..$1+$2),($3..$3+$4))
+						@working_chunk = Chunk.new(($1.to_i..$1.to_i+$2.to_i),($3.to_i..$3.to_i+$4.to_i))
 						@working_file.chunks << @working_chunk
 					when CHUNK_REMOVED_LINE
 						@working_chunk.insert(:removed,$1)
