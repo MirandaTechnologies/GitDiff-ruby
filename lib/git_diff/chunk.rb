@@ -1,12 +1,16 @@
 module GitDiff
 	class Chunk
-		attr_reader :lines
+		attr_reader :lines, :line_count
 
 		def initialize(old, new)
 			@old_range = old
 			@new_range = new
 
 			@lines = []
+			@line_count = {
+				:added 		=> 0,
+				:removed 	=> 0,
+				:unchanged 	=> 0}
 			@old_number = @old_range.first
 			@new_number = @new_range.first
 		end
@@ -18,6 +22,8 @@ module GitDiff
 					:new => ''},
 				:type => type, 
 				:content => line}
+
+			@line_count[type] += 1
 
 			case type
 			when :removed
