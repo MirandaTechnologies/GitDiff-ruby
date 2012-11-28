@@ -5,8 +5,9 @@ module GitDiff
 
 	def self.parse_file(filename)
 		file = File.open(filename)
-		GitDiff::Diff.new(file.read)
+		diff = GitDiff::Diff.new(file.read)
 		file.close
+		diff
 	end
 end
 

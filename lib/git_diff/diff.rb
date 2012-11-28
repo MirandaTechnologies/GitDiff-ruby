@@ -9,7 +9,7 @@ module GitDiff
 		OLD_FILE_PATTERN 	= /---\s+a\/(.*)/
 		NEW_FILE_PATTERN 	= /\+\+\+\s+b\/(.*)/		
 	
-		CHUNK_PATTERN		= /@@\s+-(\d+),(\d+)\s+\+(\d+),(\d+)\s+@@/
+		CHUNK_PATTERN		= /^@@\s+-(\d+)(?:,(\d+))?\s+\+(\d+)(?:,(\d+))?\s+@@/
 		CHUNK_REMOVED_LINE	= /^-(.*)/
 		CHUNK_ADDED_LINE	= /^\+(.*)/
 		CHUNK_UNCHANGED_LINE 	= /^\s(.*)/
@@ -17,25 +17,24 @@ module GitDiff
 	
 		def initialize(diff)
 			@diff = diff
+			@files = []
 			parse
 		end
 
 		private
 			def parse
-				@files = []
-				
 				
 				@diff.each_line do |line|
 					case line
 					when DIFF_HEADER
-						@files << @working_file unless @workind_chung.nil?
+						@files << @working_file unless @working_chunk.nil?
 						# Do nothing
 					when COMMIT_PATTERN
 						@working_file = DiffFile.new($1,$2,$3) 
 					when OLD_FILE_PATTERN
-						#working_file.old_filename = $1
+						@working_file.old_filename = $1
 					when NEW_FILE_PATTERN
-						#working_file.new_filename = $1
+						@working_file.new_filename = $1
 					when CHUNK_PATTERN
 						@working_chunk = Chunk.new(($1..$1+$2),($3..$3+$4))
 						@working_file.chunks << @working_chunk
@@ -49,6 +48,8 @@ module GitDiff
 						puts "Unknown"
 					end
 				end
+
+				@files << @working_file unless @working_chunk.nil?
 
 		end
 	
