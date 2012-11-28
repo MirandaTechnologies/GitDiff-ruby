@@ -10,5 +10,12 @@ module GitDiff
 			@new_filename = ''
 			@old_filename = ''
 		end
+		
+		def added_lines_count
+			count = 0
+			@chunks.each do |chunk|
+				count += chunk.added_lines_count
+			end
+		end
 	end
 end
