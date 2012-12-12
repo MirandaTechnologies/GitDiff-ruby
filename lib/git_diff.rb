@@ -9,6 +9,14 @@ module GitDiff
 		file.close
 		diff
 	end
+
+	def self.from_bare(path, oldrev, newrev)
+		cmd = "git diff-tree -p --find-copies-harder #{oldrev}..#{newrev}"
+		puts cmd
+		diff = `cd #{path} && #{cmd}`
+		puts diff
+		GitDiff::Diff.new(diff)
+	end
 end
 
 require 'git_diff/diff'
