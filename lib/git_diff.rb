@@ -12,9 +12,13 @@ module GitDiff
 
 	def self.from_bare(path, oldrev, newrev)
 		cmd = "git diff-tree -p --find-copies-harder #{oldrev}..#{newrev}"
-		puts cmd
 		diff = `cd #{path} && #{cmd}`
-		puts diff
+		GitDiff::Diff.new(diff)
+	end
+
+	def self.from_bare(path, newrev)
+		cmd = "git diff-tree -p --find-copies-harder #{newrev}"
+		diff = `cd #{path} && #{cmd}`
 		GitDiff::Diff.new(diff)
 	end
 end
