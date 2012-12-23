@@ -1,0 +1,31 @@
+diff --git a/README b/README
+index c459404..a62b506 100644
+--- a/README
++++ b/README
+@@ -3,11 +3,10 @@ This is the readme file
+ 
+~
+ ## Removal test
+~
+ 
+~
+-Line to be removed
+~
+~
+ ## Modification test
+~
+ 
+~
+ Line to be replaced :
+-some junk here and
+  here is something useful
+~
+ 
+~
+ ## Addition test
+~
+ 
+~
++Added line now appears
+  
+~

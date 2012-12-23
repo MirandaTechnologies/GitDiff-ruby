@@ -1,5 +1,5 @@
 module GitDiff
-	class Chunk
+class Chunk
 		attr_reader :lines, :line_count
 
 		def initialize(old, new)

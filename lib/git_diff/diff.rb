@@ -1,6 +1,6 @@
 module GitDiff
 	class Diff
-		attr_reader :files 
+		attr_reader :files
 
 		DIFF_HEADER			= /diff --git (.*)/
 
@@ -18,12 +18,50 @@ module GitDiff
 		def initialize(diff)
 			@diff = diff
 			@files = []
-			parse
+			parse_porcelain
 		end
 
 		private
-			def parse
-				
+            def parse_porcelain
+                working_file = nil
+                working_line = []
+                working_chunk = nil
+                @diff.each_line do |line|
+                    case line
+                    when DIFF_HEADER
+                    when COMMIT_PATTERN
+                        @files << working_file unless working_file.nil?
+					when OLD_FILE_PATTERN
+                        working_file = DiffFile.new($1,$2,$3)
+						working_file.old_filename = $1
+					when NEW_FILE_PATTERN
+						working_file.new_filename = $1
+                    when CHUNK_PATTERN
+						working_chunk = Chunk.new(($1.to_i..$1.to_i+$2.to_i),($3.to_i..$3.to_i+$4.to_i))
+						working_file.chunks << working_chunk unless working_chunk.nil?
+                    when /^~$/
+                        working_chunk.lines << working_line unless working_line.nil?
+                        working_line = []
+                    when /^\s(.*)/
+                        working_line << {
+                            :modif => :unchanged,
+                            :content => $1 }
+                    when /^\+(.*)/
+                        working_line << {
+                            :modif => :added,
+                            :content => $1 }
+                    when /^\-(.*)/
+                        working_line << {
+                            :modif => :removed,
+                            :content => $1 }
+                    else
+                        raise "Unknow line"
+                    end
+                end
+                @files << working_file
+            end
+
+			def parse_no_worddiff
 				@diff.each_line do |line|
 					case line
 					when DIFF_HEADER
@@ -50,8 +88,6 @@ module GitDiff
 				end
 
 				@files << @working_file unless @working_chunk.nil?
-
 		end
-	
 	end  
 end
